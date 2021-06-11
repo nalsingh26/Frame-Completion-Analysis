@@ -1,0 +1,215 @@
+<html>
+<head>
+<script src="https://assets.crowd.aws/crowd-html-elements.js"></script>
+<script>
+    function showDiv() {
+        document.getElementById("hideable_div").style.display = 'block';
+        document.getElementById("example_btn").style.display = 'none';
+        document.getElementById("example_btn_h").style.display = 'block';
+    }
+    function hideDiv() {
+        document.getElementById("hideable_div").style.display = 'none';
+        document.getElementById("example_btn").style.display = 'block';
+        document.getElementById("example_btn_h").style.display = 'none';
+    }
+    function clearContextRadioBtn(){
+        document.getElementsById("ans_in_context_yes").checked = false;
+        document.getElementsById("ans_in_context_no").checked = false;
+    }
+    function clearTextbox(){
+        document.getElementById("worker_question").value=""
+        document.getElementById("worker_answer").value=""
+    }
+    function showInContext(){
+        document.getElementById("in_context_div").style.display = 'block';
+        clearTextbox();
+        document.getElementById("ans_in_context_yes").required = true;
+        document.getElementById("ques_div").style.display = 'none';
+        document.getElementById("worker_question").required = false;
+        document.getElementById("answer_div").style.display = 'none';
+        document.getElementById("worker_answer").required = false;
+    }
+    function hideInContext(){
+        document.getElementById("ans_in_context_yes").required = false;
+        document.getElementById("response_div").style.display = 'block';
+        document.getElementById("ques_div").style.display = 'block';
+        document.getElementById("answer_div").style.display = 'block';
+        document.getElementById("worker_answer").required = true;
+        document.getElementById("worker_question").required = true;
+        document.getElementById("in_context_div").style.display = 'none';
+        clearTextbox();
+        clearContextRadioBtn();
+    }
+    function showTextbox() {
+        document.getElementById("response_div").style.display = 'block';
+        document.getElementById("ques_div").style.display = 'block';
+        document.getElementById("answer_div").style.display = 'block';
+        document.getElementById("worker_question").required = true;
+        document.getElementById("worker_answer").required = true;
+        clearTextbox();
+    }
+    function hideQuestionTextbox() {
+        document.getElementById("response_div").style.display = 'block';
+        document.getElementById("ques_div").style.display = 'none';
+        document.getElementById("answer_div").style.display = 'block';
+        document.getElementById("worker_question").required = false;
+        document.getElementById("worker_answer").required = true;
+        clearTextbox();
+    }
+    
+    function validateForm() {
+        var ans = document.getElementById("worker_answer").value.trim().toLowerCase();
+        var ques = document.getElementById("worker_question").value.trim().toLowerCase();
+            if (ans ==""){
+                alert("The responses cannot be blank or just spaces.");
+                return false;
+            }
+            if (ans.includes("/")){
+                alert("Only one answer per task is allowed. Answer cannot have '/'");
+                return false;
+            }
+            if(ans.length > 100){
+                alert("The answer response is too long. Please shorten it.");
+                return false;
+            }
+            if(ques.length>0){
+                if( !(ques.startsWith("wh") || ques.startsWith("how"))){
+                    alert("Question should start from w-word or how.");
+                    return false;
+                }
+                if(!ques.endsWith("?")){
+                    alert("Please add a question mark at the end of the question entered.");
+                    return false;
+                }
+            }
+        return true;
+    }
+    
+</script>
+</head>
+<style>
+    #hideable_div{
+        display: none;
+    }
+    .show_hide_btn{
+        background-color: white;
+        border: none;
+        color: blue;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    table,th,td {
+        border: 1px solid black;
+    }
+</style>
+<body>
+    <h2>Overview</h2>
+    <p>
+        The goal is to find suitable questions that asked about missing commonsense knowledge in a given sentence. For example, "the plumber is fixing the toilet." 
+        A suitable question can be "Where is the plumber? (answer: bathroom, kitchen, building etc.)", "What tool does the plumber use? (answers: hammer, wrenches, etc.)" etc. 
+        The answers to these questions are not in the given sentence. However, a human can provide reasonable answers to these questions easily.</p>
+    <h2>Instructions</h2>
+    <div class = "instructions">
+        In this task, you will be given context sentence, question pairs. You need to access the question's validity.  If the question is invalid, you will be required to write a question that meets 
+        the criteria discussed below. If the question is valid, you will be required to provide a word or short phrase as an answer. The criterias are:
+        <ul>
+            <li>Related to the context sentences.</li>
+            <li>Not too general or too specific (read examples).</li>
+            <li>Not directly answered by text in the context sentences.</li>
+            <li>Easily answered by a human using common sense.</li>
+            <li>Grammatically correct.</li>
+        </ul>
+        <button class="show_hide_btn" id="example_btn" onclick="showDiv()">Click to view examples</button>
+        <button class="show_hide_btn" id="example_btn_h" onclick="hideDiv()" style="display: none;">Click to hide examples</button>
+        <div class="hideable_div" id = "hideable_div">
+            <h3>Examples</h3>
+            <b>Context sentence:</b> Bald eagle perched in a tree looking for prey and then flew away.
+            <br>
+            Valid questions:
+            <table>
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th>Response</th>
+                <th>Reason</th>
+                <th>Possible answers/Correct question</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>What prey do bald eagles usually look for?</td>
+                <td>Yes (Valid)</td>
+                <td>Meets all the criteria.</td>
+                <td>fish/rat/rabbit</td>
+              </tr>
+              <tr>
+                <td>Where do bald eagles usually look for prey?</td>
+                <td>Yes (Valid)</td>
+                <td>Meets all the criteria.</td>
+                <td>lake/forest/grassland</td>
+              </tr>
+              <tr>
+                <td>What prey do bald eagle?</td>
+                <td>No (Invalid)</td>
+                <td>Grammatically incorrect.</td>
+                <td>What prey do bald eagle usually look for? + fish/rat/rabbit</td>
+              </tr>
+              <tr>
+                <td>Which waterbody can a bald eagle find a sockeye salmon?</td>
+                <td>No (Invalid)</td>
+                <td>This question is too specific.</td>
+                <td>Where do bald eagles usually look for prey?</td>
+              </tr>
+              <tr>
+                <td>Where is bald eagle perching?</td>
+                <td>No (Invalid)</td>
+                <td>Answer is in the context sentence.</td>
+                <td>Where do bald eagles usually look for prey?</td>
+              </tr>
+              <tr>
+                <td>What prey do owls usually look for?</td>
+                <td>No (Invalid)</td>
+                <td>This not related to the context sentence.</td>
+                <td>What prey do bald eagles usually look for?</td>
+              </tr>
+            </tbody>
+            </table>
+        </div>
+    </div>
+    <crowd-form class="form_div" onsubmit="return validateForm()">
+        <p><strong>Context sentence(s): </strong>
+        ${context_sentence}</p>
+        <p><strong>Question: </strong>
+        ${question}</p>
+        
+        <p>
+            <label>Is the question valid for the given context?</label>
+            <br><br>
+            <input type="radio" id="rating_yes" name="rating" value="yes" onclick="showInContext()" required>
+            <label for="rating_yes">Yes</label><br><br>
+            <input type="radio" id="rating_no" name="rating" value="no" onclick="hideInContext()">
+            <label for="rating_no">No</label><br><br>
+            <div id="in_context_div" style="display: none;">
+                <label>Is the answer to the question in the context sentence?</label><br><br>
+                <input type="radio" id="ans_in_context_yes" name="in_context" value="yes" onclick="showTextbox()">
+                <label for="ans_in_context_yes">Yes</label><br><br>
+                <input type="radio" id="ans_in_context_no" name="in_context" value="no" onclick="hideQuestionTextbox()">
+                <label for="ans_in_context_no">No</label><br><br>
+            </div>
+            <div id="response_div" style="display: none;">
+                    <div id="ques_div" style="display: none;">
+                        <label id="worker_question_label">Enter an alternate "W" word or "How" question which meets our criteria (can <strong>not</strong> be answered using words in the context sentence.):</label><br>
+                        <crowd-input id="worker_question" name="worker_question" type="text" min-length="15" class="worker_question" error-message = "sentence has to be longer than 20 characters"> </crowd-input>
+                    </div>
+                    <br><br>
+                    <div id="answer_div">
+                        <label>Enter a word or short phrase as an answer:</label><br>
+                        <crowd-input id="worker_answer" name="worker_answer" type="text" class="worker_answer"> </crowd-input> <br><br>
+                    </div>
+                </div>
+        </p>
+    </crowd-form>
+</body>
+</html>

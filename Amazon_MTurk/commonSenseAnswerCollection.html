@@ -1,0 +1,77 @@
+<html>
+<head>
+<script src="https://assets.crowd.aws/crowd-html-elements.js"></script>
+<script>
+    function validateForm() {
+        var ans = document.getElementById("worker_answer").value.trim().toLowerCase();
+            if (ans ==""){
+                alert("The responses cannot be blank or just spaces.");
+                return false;
+            }
+            if (ans.includes("/")){
+                alert("Only one answer per task is allowed. Answer cannot have '/'");
+                return false;
+            }
+            if (ans.includes("!")){
+                alert("The answer cannot have '!'");
+                return false;
+            }
+            if(ans.length > 150){
+                alert("The answer response is too long. Please shorten it.");
+                return false;
+            }
+        return true;
+    }
+    
+</script>
+</head>
+<body>
+    <h2>Overview</h2>
+    The goal is to answer the given question using your commonsense. The questions will often have more than one acceptable answer, but we would like you to provide 
+    a single answer as <strong><i>a word or short phrase (in English)</i></strong>. The questions may be trickier than they seem, so please read them carefully!
+    
+    <h2>Instructions</h2>
+       <div class = "instructions">
+        You will be given a context sentence and a question. The question is generated from the context sentence, but you should <strong>not</strong> answer the questions based on the context sentence.
+        We want to collect answers from your commonsense or general knowledge of the world, not by reading the context sentence. To be specific, the answers should meet the following criterias:
+        <ul>
+            <strong><li>Answers are not in the context sentences.</li></strong>
+            <li>Answers are not too general or too specific.</li>
+            <li>Answers are using your common sense.</li>
+        </ul>
+
+    <hr>
+    <h2>Examples</h2>
+    <h4>Context sentence:</h4> I cracked the eggs into the bowl, and beat them with a fork.
+    <h4>Question:</h4> When does one usually crack eggs?
+    <h4>Acceptable Answers(any <i>one</i> of them)</h4>
+    <ul>
+        <li>to make omelette</li>
+        <li>to bake cake</li>
+        <li>for baking</li>
+        <li>to scrambled them</li>
+        <li>to mix the yolk and whites</li>
+    </ul>
+    There are several other acceptable answers to this question.<br>
+    <h4>Unacceptable Answers:</h4>
+    <ul>
+        <li>Before beating them with a fork.<b>(in context sentence)</b></li>
+        <li>I make omelettes for Sunday breakfast <b>(too specific/personal)</b></li>
+        <li>Bakinggg!!! <b>(over-embellished)</b></li>
+        <li>Horneando <b>(not in English)</b></li>
+        <li>When I want to <b>(too general)</b></li>
+    </ul>
+    <hr>
+    <h2>Task</h2>
+    <crowd-form class="form_div" onsubmit="return validateForm()">
+        <p><strong>Context sentence(s): </strong>
+        ${context_sentences}</p>
+        <p><strong>Question: </strong>
+        ${question}</p>
+        <p>
+            <label>Enter a word or short phrase as an answer:</label><br>
+            <crowd-input id="worker_answer" name="worker_answer" type="text" class="worker_answer" required> </crowd-input> <br>
+        </p>
+    </crowd-form>
+</body>
+</html>
